@@ -88,10 +88,13 @@ const right = Bodies.fromVertices(0, 0, [rightWall ?? []], {
 scaleObject(right, canvasHeight);
 setPositionFromTopLeft(right, canvasWidth - getObjectWidth(right));
 
-const paddle = Bodies.circle(200, 200, 25, {
+const paddle = Bodies.circle(200, 200, 30, {
   slop: 0,
   frictionAir: 1,
   inverseInertia: 0,
+  render: {
+    fillStyle: "#E04141",
+  },
 });
 // ホッケーのボール（球）を作成
 const puck = Bodies.circle(250, 300, 20, {
@@ -100,6 +103,9 @@ const puck = Bodies.circle(250, 300, 20, {
   friction: 0,
   frictionAir: 0.005,
   slop: 0,
+  render: {
+    fillStyle: "#fff",
+  },
 });
 
 const goal1 = Bodies.rectangle(
