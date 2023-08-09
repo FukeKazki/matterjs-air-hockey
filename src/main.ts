@@ -94,6 +94,8 @@ const paddle = Bodies.circle(200, 200, 30, {
   inverseInertia: 0,
   render: {
     fillStyle: "#E04141",
+    lineWidth: 4,
+    strokeStyle: "#7C1111",
   },
 });
 // ホッケーのボール（球）を作成
