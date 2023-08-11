@@ -1,6 +1,17 @@
-// import "./style.css";
 import "./reset.css";
-import Matter from "matter-js";
+import "./pathseg.js";
+import {
+  Engine,
+  Render,
+  Runner,
+  Bodies,
+  Body,
+  Composite,
+  Common,
+  Mouse,
+  MouseConstraint,
+  Events,
+} from "matter-js";
 import LeftWallSvg from "./assets/left_wall.svg";
 import RightWallSvg from "./assets/right_wall.svg";
 // @ts-expect-error
@@ -12,12 +23,7 @@ import {
   setPositionFromTopLeft,
 } from "./helper";
 
-Matter.Common.setDecomp(decomp);
-const Engine = Matter.Engine,
-  Render = Matter.Render,
-  Runner = Matter.Runner,
-  Bodies = Matter.Bodies,
-  Composite = Matter.Composite;
+Common.setDecomp(decomp);
 
 const engine = Engine.create({
   gravity: {
@@ -34,7 +40,7 @@ const viewportWidth = window.innerWidth;
 const viewportHeight = window.innerHeight;
 
 // canvas のサイズを計算
-let canvasWidth, canvasHeight;
+let canvasWidth: number, canvasHeight: number;
 if (viewportWidth / viewportHeight > aspectRatio) {
   canvasHeight = viewportHeight;
   canvasWidth = canvasHeight * aspectRatio;
@@ -50,6 +56,8 @@ const render = Render.create({
     width: canvasWidth,
     height: canvasHeight,
     wireframes: false,
+    showVelocity: true,
+    showCollisions: true,
   },
 });
 
@@ -136,56 +144,26 @@ const goal2 = Bodies.rectangle(
   },
 );
 setPositionFromTopLeft(goal2, getObjectWidth(left), canvasHeight - 16);
-function handleBeforeUpdate() {
-  // const clamp = 60;
-  // const clampedVelocity = puck.velocity;
-  // if (puck.velocity.x > clamp) {
-  //   clampedVelocity.x = clamp;
-  // }
-  // if (puck.velocity.y > clamp) {
-  //   clampedVelocity.y = clamp;
-  // }
-  // Matter.Body.setVelocity(puck, clampedVelocity);
-  // clampPaddlePosition(paddle);
-  // clampPaddlePosition(paddle2);
-}
-// function clampPaddlePosition(paddle: Matter.Body) {
-//   const projectedX = paddle.position.x + paddle.velocity.x;
-//   const projectedY = paddle.position.y + paddle.velocity.y;
-//   if (projectedX > canvas.width - 44) {
-//     Body.setPosition(paddle, { x: canvas.width - 44, y: paddle.position.y });
-//   }
-//   if (projectedX < 44) {
-//     Body.setPosition(paddle, { x: 44, y: paddle.position.y });
-//   }
-//   if (projectedY > canvas.height - 44) {
-//     Body.setPosition(paddle, { x: paddle.position.x, y: canvas.height - 44 });
-//   }
-//   if (projectedY < 44) {
-//     Body.setPosition(paddle, { x: paddle.position.x, y: 44 });
-//   }
-// }
 
 // マウスのドラッグイベントを使用して、パドルを操作
-const mouse = Matter.Mouse.create(render.canvas);
-const mouseConstraint = Matter.MouseConstraint.create(engine, {
+const mouse = Mouse.create(render.canvas);
+const mouseConstraint = MouseConstraint.create(engine, {
   mouse: mouse,
   constraint: {
-    stiffness: 1,
+    stiffness: 0.2,
     render: { visible: false },
   },
 });
 mouseConstraint.mouse.button = -1; // 最初のクリックを無効にするため
 // マウスのドラッグイベントのハンドラ
-Matter.Events.on(mouseConstraint, "mousemove", (event) => {
+Events.on(mouseConstraint, "mousemove", (event) => {
   const { mouse } = event.source;
-  Matter.Body.setPosition(paddle, {
+  Body.setPosition(paddle, {
     x: mouse.position.x,
     y: mouse.position.y,
   });
 });
 
-Matter.Events.on(engine, "beforeUpdate", () => handleBeforeUpdate());
 Composite.add(engine.world, [
   left,
   right,
