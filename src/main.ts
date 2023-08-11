@@ -105,13 +105,12 @@ const paddle = Bodies.circle(200, 200, 30, {
     lineWidth: 4,
     strokeStyle: "#7C1111",
   },
-  restitution: 1,
   mass: 1000,
 });
 // ホッケーのボール（球）を作成
 const puck = Bodies.circle(250, 300, 20, {
   label: "puck",
-  restitution: 1,
+  restitution: 0.9,
   friction: 0,
   frictionAir: 0.005,
   slop: 0,
@@ -175,3 +174,22 @@ Composite.add(engine.world, [
   goal1,
   goal2,
 ]);
+
+Events.on(engine, "afterUpdate", function() {
+  // ボールの位置を確認します。
+  if (
+    puck.position.x < 0 ||
+    puck.position.x > canvasWidth ||
+    puck.position.y < 0 ||
+    puck.position.y > canvasHeight
+  ) {
+    // ボールがcanvasの範囲外にある場合、ボールを新しい位置に再配置します。
+    Body.setPosition(puck, {
+      x: canvasWidth / 2, // canvasの中央に再配置
+      y: canvasHeight / 2,
+    });
+
+    // 任意の初速度や方向にボールを動かす場合は以下のように速度を設定します。
+    Body.setVelocity(puck, { x: 0, y: 0 }); // 速度をリセット
+  }
+});
