@@ -77,7 +77,7 @@ const left = Bodies.fromVertices(0, 0, [leftWall ?? []], {
   render: {
     fillStyle: "#FABE00",
   },
-  restitution: 1,
+  restitution: 1, // 反発係数
   frictionAir: 0.01,
   friction: 0,
 });
@@ -105,6 +105,7 @@ const paddle = Bodies.circle(200, 200, 30, {
     lineWidth: 4,
     strokeStyle: "#7C1111",
   },
+  mass: 1000,
 });
 // ホッケーのボール（球）を作成
 const puck = Bodies.circle(250, 300, 20, {
