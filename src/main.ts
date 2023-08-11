@@ -105,12 +105,13 @@ const paddle = Bodies.circle(200, 200, 30, {
     lineWidth: 4,
     strokeStyle: "#7C1111",
   },
+  restitution: 1,
   mass: 1000,
 });
 // ホッケーのボール（球）を作成
 const puck = Bodies.circle(250, 300, 20, {
   label: "puck",
-  restitution: 0.5,
+  restitution: 1,
   friction: 0,
   frictionAir: 0.005,
   slop: 0,
