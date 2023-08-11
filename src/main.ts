@@ -14,12 +14,14 @@ import {
 } from "matter-js";
 import LeftWallSvg from "./assets/left_wall.svg";
 import RightWallSvg from "./assets/right_wall.svg";
+import ChottySvg from "./assets/chotty.svg";
+import ChottyPng from "./assets/chotty.png";
 // @ts-expect-error
 import decomp from "poly-decomp";
 import {
   getObjectWidth,
   getVerticesFromSvg,
-  scaleObject,
+  fitCanvas,
   setPositionFromTopLeft,
 } from "./helper";
 
@@ -72,7 +74,21 @@ Runner.run(runner, engine);
 // svg to vertices
 const leftWall = await getVerticesFromSvg(LeftWallSvg);
 const rightWall = await getVerticesFromSvg(RightWallSvg);
-const left = Bodies.fromVertices(0, 0, [leftWall ?? []], {
+const chottyVertices = await getVerticesFromSvg(ChottySvg);
+const chotty = Bodies.fromVertices(0, 0, chottyVertices ?? [], {
+  render: {
+    sprite: {
+      single: true,
+      texture: ChottyPng,
+      yScale: 1,
+      xScale: 1,
+    },
+  },
+  restitution: 0.9,
+});
+setPositionFromTopLeft(chotty, 300, 300);
+
+const left = Bodies.fromVertices(0, 0, leftWall ?? [], {
   isStatic: true,
   render: {
     fillStyle: "#FABE00",
@@ -81,10 +97,10 @@ const left = Bodies.fromVertices(0, 0, [leftWall ?? []], {
   frictionAir: 0.01,
   friction: 0,
 });
-scaleObject(left, canvasHeight);
+fitCanvas(left, canvasHeight);
 setPositionFromTopLeft(left);
 
-const right = Bodies.fromVertices(0, 0, [rightWall ?? []], {
+const right = Bodies.fromVertices(0, 0, rightWall ?? [], {
   isStatic: true,
   render: {
     fillStyle: "#FABE00",
@@ -93,7 +109,7 @@ const right = Bodies.fromVertices(0, 0, [rightWall ?? []], {
   frictionAir: 0.01,
   friction: 0,
 });
-scaleObject(right, canvasHeight);
+fitCanvas(right, canvasHeight);
 setPositionFromTopLeft(right, canvasWidth - getObjectWidth(right));
 
 const paddle = Bodies.circle(200, 200, 30, {
@@ -173,6 +189,7 @@ Composite.add(engine.world, [
   mouseConstraint,
   goal1,
   goal2,
+  chotty,
 ]);
 
 Events.on(engine, "afterUpdate", function() {

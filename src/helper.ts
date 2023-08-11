@@ -8,10 +8,13 @@ export const getVerticesFromSvg = async (path: string) => {
       const parser = new DOMParser();
       return parser.parseFromString(svgString, "image/svg+xml");
     });
-  const pathData = svgDoc.querySelector("path");
-  if (!pathData) return;
+  const pathDatas = svgDoc.querySelectorAll("path");
+  if (!pathDatas) return;
   // pathデータをverticesに変換
-  const vertices = Matter.Svg.pathToVertices(pathData, 10); // 30はスケール、必要に応じて調整
+  const vertices = Array.from(pathDatas).map((pathData) => {
+    return Matter.Svg.pathToVertices(pathData, 10);
+  });
+  // const vertices = Matter.Svg.pathToVertices(pathData, 10); // 30はスケール、必要に応じて調整
   return vertices;
 };
 
@@ -29,7 +32,7 @@ export const setPositionFromTopLeft = (body: Matter.Body, x = 0, y = 0) => {
 /**
  * オブジェクトをcanvasに併せてスケールする
  */
-export const scaleObject = (body: Matter.Body, canvasHeight: number) => {
+export const fitCanvas = (body: Matter.Body, canvasHeight: number) => {
   const objectHeight = body.bounds.max.y - body.bounds.min.y;
   const scale = canvasHeight / objectHeight;
   Matter.Body.scale(body, scale, scale);
