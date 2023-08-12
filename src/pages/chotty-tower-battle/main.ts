@@ -5,8 +5,6 @@ import {
   Bodies,
   Body,
   Composite,
-  Mouse,
-  MouseConstraint,
   Events,
   Vector,
 } from "matter-js";
@@ -80,7 +78,6 @@ setPositionFromTopLeft(
 
 Composite.add(engine.world, ground);
 
-let isMouseDown = false;
 let placeholderPosition = { x: 0, y: 0 };
 render.canvas.addEventListener("mousemove", function(event) {
   const rect = render.canvas.getBoundingClientRect();
@@ -183,7 +180,6 @@ const createChotty = (
   return chotty;
 };
 render.canvas.addEventListener("mouseup", function() {
-  isMouseDown = false;
   const vertices = [
     chottyVertices,
     chottyDanceVertices,
