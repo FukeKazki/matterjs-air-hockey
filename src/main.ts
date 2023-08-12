@@ -1,5 +1,3 @@
-import "./reset.css";
-import "./pathseg.js";
 import {
   Engine,
   Render,
@@ -7,7 +5,6 @@ import {
   Bodies,
   Body,
   Composite,
-  Common,
   Mouse,
   MouseConstraint,
   Events,
@@ -16,22 +13,12 @@ import LeftWallSvg from "./assets/left_wall.svg";
 import RightWallSvg from "./assets/right_wall.svg";
 import ChottySvg from "./assets/chotty/chotty.svg";
 import ChottyPng from "./assets/chotty/chotty.png";
-import ChottyMogumoguSvg from "./assets/chotty/mogumogu.svg";
-import ChottyMogumoguPng from "./assets/chotty/mogumogu.png";
-import ChottyDanceSvg from "./assets/chotty/dance.svg";
-import ChottyDancePng from "./assets/chotty/dance.png";
-import ChottyOmedetouSvg from "./assets/chotty/omedetou.svg";
-import ChottyOmedetouPng from "./assets/chotty/omedetou.png";
-// @ts-expect-error
-import decomp from "poly-decomp";
 import {
   getObjectWidth,
   getVerticesFromSvg,
   fitCanvas,
   setPositionFromTopLeft,
 } from "./helper";
-
-Common.setDecomp(decomp);
 
 const engine = Engine.create({
   gravity: {
@@ -81,20 +68,10 @@ const loadAssets = async (url: string[]) => {
   return Promise.all(url.map((v) => getVerticesFromSvg(v)));
 };
 
-const [
-  leftWall,
-  rightWall,
-  chottyVertices,
-  chottyMogumoguVertices,
-  chottyDanceVertices,
-  chottyOmedetouVertices,
-] = await loadAssets([
+const [leftWall, rightWall, chottyVertices] = await loadAssets([
   LeftWallSvg,
   RightWallSvg,
   ChottySvg,
-  ChottyMogumoguSvg,
-  ChottyDanceSvg,
-  ChottyOmedetouSvg,
 ]);
 // svg to vertices
 const chotty = Bodies.fromVertices(0, 0, chottyVertices ?? [], {
@@ -110,46 +87,6 @@ const chotty = Bodies.fromVertices(0, 0, chottyVertices ?? [], {
 });
 setPositionFromTopLeft(chotty, 300, 300);
 Body.scale(chotty, 0.5, 0.5);
-
-const chottyMogumogu = Bodies.fromVertices(0, 0, chottyMogumoguVertices ?? [], {
-  render: {
-    sprite: {
-      single: true,
-      texture: ChottyMogumoguPng,
-      yScale: 0.5, // テクスチャのscale を調整するときは、Body.scale と同じ値を設定する必要があります。
-      xScale: 0.5,
-    },
-  },
-  restitution: 0.9,
-});
-setPositionFromTopLeft(chottyMogumogu, 300, 200);
-Body.scale(chottyMogumogu, 0.5, 0.5);
-
-const chottyDance = Bodies.fromVertices(0, 0, chottyDanceVertices ?? [], {
-  render: {
-    sprite: {
-      single: true,
-      texture: ChottyDancePng,
-      yScale: 0.5,
-      xScale: 0.5,
-    },
-  },
-});
-setPositionFromTopLeft(chottyDance, 300, 400);
-Body.scale(chottyDance, 0.5, 0.5);
-
-const chottyOmedetou = Bodies.fromVertices(0, 0, chottyOmedetouVertices ?? [], {
-  render: {
-    sprite: {
-      single: true,
-      texture: ChottyOmedetouPng,
-      yScale: 0.5,
-      xScale: 0.5,
-    },
-  },
-});
-setPositionFromTopLeft(chottyOmedetou, 300, 500);
-Body.scale(chottyOmedetou, 0.5, 0.5);
 
 const left = Bodies.fromVertices(0, 0, leftWall ?? [], {
   isStatic: true,
@@ -253,9 +190,6 @@ Composite.add(engine.world, [
   goal1,
   goal2,
   chotty,
-  chottyMogumogu,
-  chottyDance,
-  chottyOmedetou,
 ]);
 
 Events.on(engine, "afterUpdate", function() {
