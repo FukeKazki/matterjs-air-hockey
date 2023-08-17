@@ -11,8 +11,6 @@ import {
 } from "matter-js";
 import LeftWallSvg from "./assets/left_wall.svg";
 import RightWallSvg from "./assets/right_wall.svg";
-import ChottySvg from "./assets/chotty/chotty.svg";
-import ChottyPng from "./assets/chotty/chotty.png";
 import {
   getObjectWidth,
   getVerticesFromSvg,
@@ -68,25 +66,7 @@ const loadAssets = async (url: string[]) => {
   return Promise.all(url.map((v) => getVerticesFromSvg(v)));
 };
 
-const [leftWall, rightWall, chottyVertices] = await loadAssets([
-  LeftWallSvg,
-  RightWallSvg,
-  ChottySvg,
-]);
-// svg to vertices
-const chotty = Bodies.fromVertices(0, 0, chottyVertices ?? [], {
-  render: {
-    sprite: {
-      single: true,
-      texture: ChottyPng,
-      yScale: 0.5, // テクスチャのscale を調整するときは、Body.scale と同じ値を設定する必要があります。
-      xScale: 0.5,
-    },
-  },
-  restitution: 0.9,
-});
-setPositionFromTopLeft(chotty, 300, 300);
-Body.scale(chotty, 0.5, 0.5);
+const [leftWall, rightWall] = await loadAssets([LeftWallSvg, RightWallSvg]);
 
 const left = Bodies.fromVertices(0, 0, leftWall ?? [], {
   isStatic: true,
@@ -189,10 +169,9 @@ Composite.add(engine.world, [
   mouseConstraint,
   goal1,
   goal2,
-  chotty,
 ]);
 
-Events.on(engine, "afterUpdate", function() {
+Events.on(engine, "afterUpdate", function () {
   // ボールの位置を確認します。
   if (
     puck.position.x < 0 ||
